@@ -39,6 +39,7 @@ var click_pos := Vector2.ZERO
 # P6 settings storage
 var p6_is_tank := false
 var p6_simulate_mitigations := false
+var p6_tank_comp := ""
 
 @onready var buttons := {"p3_lc" : %P3LaunchButton, "p5_wrath" : %P5WLaunchButton,
 	"p5_death" : %P5DLaunchButton, "p6_wyrm" : %P6LaunchButton, "p7": %P7LaunchButton,
@@ -206,7 +207,7 @@ func show_mitigation_dialog() -> void:
 
 func _on_mitigation_yes() -> void:
 	p6_simulate_mitigations = true
-	start_game_scene("p6_wyrm")
+	show_tank_comp_dialog()
 
 
 func _on_mitigation_no() -> void:
@@ -215,6 +216,43 @@ func _on_mitigation_no() -> void:
 
 
 func _on_mitigation_dialog_closed() -> void:
+	# User clicked X button - just close and return to main menu
+	pass
+
+
+func show_tank_comp_dialog() -> void:
+	var dialog = AcceptDialog.new()
+	dialog.title = "Tank Composition"
+	dialog.dialog_text = "Please choose your comp"
+	
+	# Create a VBoxContainer to hold the buttons
+	var vbox = VBoxContainer.new()
+	
+	var comps = ["WAR/DRK", "WAR/GNB", "WAR/PLD", "PLD/DRK", "PLD/GNB", "GNB/DRK"]
+	
+	for comp in comps:
+		var button = Button.new()
+		button.text = comp
+		button.pressed.connect(func(): _on_comp_selected(comp))
+		vbox.add_child(button)
+	
+	dialog.add_child(vbox)
+	dialog.close_requested.connect(_on_comp_dialog_closed)
+	
+	add_child(dialog)
+	dialog.popup_centered_ratio(0.3)
+
+
+func _on_comp_selected(comp: String) -> void:
+	p6_tank_comp = comp
+	# Find and close the dialog
+	var dialogs = get_children().filter(func(child): return child is AcceptDialog)
+	if dialogs.size() > 0:
+		dialogs[0].queue_free()
+	start_game_scene("p6_wyrm")
+
+
+func _on_comp_dialog_closed() -> void:
 	# User clicked X button - just close and return to main menu
 	pass
 
