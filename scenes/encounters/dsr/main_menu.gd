@@ -36,6 +36,10 @@ var load_progress := []
 var loading_seq := ""
 var click_pos := Vector2.ZERO
 
+# P6 settings storage
+var p6_is_tank := false
+var p6_simulate_mitigations := false
+
 @onready var buttons := {"p3_lc" : %P3LaunchButton, "p5_wrath" : %P5WLaunchButton,
 	"p5_death" : %P5DLaunchButton, "p6_wyrm" : %P6LaunchButton, "p7": %P7LaunchButton,
 	"launcher" : %UpdateLauncherButton}
@@ -148,11 +152,59 @@ func _on_p5d_launch_button_pressed() -> void:
 
 
 func _on_p6_launch_button_pressed() -> void:
-	start_game_scene("p6_wyrm")
+	show_tank_role_dialog()
 
 
 func _on_p7_launch_button_pressed() -> void:
 	start_game_scene("p7")
+
+
+func show_tank_role_dialog() -> void:
+	var dialog = ConfirmationDialog.new()
+	dialog.title = "Role Selection"
+	dialog.dialog_text = "Are you playing tank?"
+	dialog.ok_button_text = "Yes"
+	dialog.cancel_button_text = "No"
+	
+	dialog.confirmed.connect(_on_tank_role_yes)
+	dialog.canceled.connect(_on_tank_role_no)
+	
+	add_child(dialog)
+	dialog.popup_centered_ratio(0.3)
+
+
+func _on_tank_role_yes() -> void:
+	p6_is_tank = true
+	show_mitigation_dialog()
+
+
+func _on_tank_role_no() -> void:
+	p6_is_tank = false
+	start_game_scene("p6_wyrm")
+
+
+func show_mitigation_dialog() -> void:
+	var dialog = ConfirmationDialog.new()
+	dialog.title = "Mitigation Settings"
+	dialog.dialog_text = "Do you want to simulate tank mitigations?"
+	dialog.ok_button_text = "Yes"
+	dialog.cancel_button_text = "No"
+	
+	dialog.confirmed.connect(_on_mitigation_yes)
+	dialog.canceled.connect(_on_mitigation_no)
+	
+	add_child(dialog)
+	dialog.popup_centered_ratio(0.3)
+
+
+func _on_mitigation_yes() -> void:
+	p6_simulate_mitigations = true
+	start_game_scene("p6_wyrm")
+
+
+func _on_mitigation_no() -> void:
+	p6_simulate_mitigations = false
+	start_game_scene("p6_wyrm")
 
 
 func _on_update_launcher_button_pressed() -> void:
