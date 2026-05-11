@@ -168,6 +168,7 @@ func show_tank_role_dialog() -> void:
 	
 	dialog.confirmed.connect(_on_tank_role_yes)
 	dialog.canceled.connect(_on_tank_role_no)
+	dialog.close_requested.connect(_on_tank_role_dialog_closed)
 	
 	add_child(dialog)
 	dialog.popup_centered_ratio(0.3)
@@ -183,6 +184,11 @@ func _on_tank_role_no() -> void:
 	start_game_scene("p6_wyrm")
 
 
+func _on_tank_role_dialog_closed() -> void:
+	# User clicked X button - just close and return to main menu
+	pass
+
+
 func show_mitigation_dialog() -> void:
 	var dialog = ConfirmationDialog.new()
 	dialog.title = "Mitigation Settings"
@@ -192,6 +198,7 @@ func show_mitigation_dialog() -> void:
 	
 	dialog.confirmed.connect(_on_mitigation_yes)
 	dialog.canceled.connect(_on_mitigation_no)
+	dialog.close_requested.connect(_on_mitigation_dialog_closed)
 	
 	add_child(dialog)
 	dialog.popup_centered_ratio(0.3)
@@ -205,6 +212,11 @@ func _on_mitigation_yes() -> void:
 func _on_mitigation_no() -> void:
 	p6_simulate_mitigations = false
 	start_game_scene("p6_wyrm")
+
+
+func _on_mitigation_dialog_closed() -> void:
+	# User clicked X button - just close and return to main menu
+	pass
 
 
 func _on_update_launcher_button_pressed() -> void:
